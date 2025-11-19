@@ -87,6 +87,17 @@ def gettoken():
                 if c == '"':
                     state = States.String
                     break
+        elif c.isalpha() or c == "_":
+            state = States.Error
+            error_reason = "Illegal character/character sequence"
+            while idx + 1 < len(input_file):
+                c = input_file[idx + 1]
+                if c.isalpha() or c.isdigit() or c == "_":
+                    lexeme += c
+                    idx += 1
+                else:
+                    state = States.Identifier
+                    break
         elif lexeme not in fixed_tokens:
             state = States.Error
             error_reason = "Illegal character/character sequence"
