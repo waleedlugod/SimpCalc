@@ -5,7 +5,11 @@ output_file = open(filename.replace("input", "output_scan_test"), "w")
 scanner.setup(filename)
 while True:
     out = scanner.gettoken()
-    output_file.write(f"{out['token']:<17}{out['lexeme']}")
+    if out["error"]:
+        output_file.write(f"{out['error']}\nError")
+    else:
+        output_file.write(f"{out['token']:<17}{out['lexeme']}")
+
     if out["token"] == "EndOfFile":
         break
     else:

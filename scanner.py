@@ -52,14 +52,17 @@ def gettoken():
     global idx
     token = ""
     lexeme = ""
-    build = ""
+    error = ""
     state = States.NONE
 
     if idx < len(input_file):
         c = input_file[idx]
+
         while c == " " or c == "\t" or c == "\n":
             idx += 1
             c = input_file[idx]
+
+        error_reason = ""
         lexeme = c
         if c == ":" or c == "<" or c == ">" or c == "!":
             if input_file[idx + 1] == "=":
@@ -67,19 +70,35 @@ def gettoken():
                 idx += 1
             elif c == "!":
                 state = States.Error
+                error_reason = "Illegal character/character sequence"
         elif c == "*":
             if input_file[idx + 1] == "*":
                 lexeme += input_file[idx + 1]
                 idx += 1
+        elif c == '"':
+            state = States.Error
+            error_reason = "Unterminated string"
+            while idx + 1 < len(input_file):
+                c = input_file[idx + 1]
+                if c == "\n":
+                    break
+                lexeme += c
+                idx += 1
+                if c == '"':
+                    state = States.String
+                    break
         elif lexeme not in fixed_tokens:
             state = States.Error
+            error_reason = "Illegal character/character sequence"
+        idx += 1
 
-        if state == States.Error:
-            token = States.Error.name
-        elif state == States.NONE:
+        if state == States.NONE:
             token = fixed_tokens[lexeme]
+        else:
+            token = state.name
+            if state == States.Error:
+                error = f"Lexical Error: {error_reason}"
     else:
         token = "EndOfFile"
 
-    idx += 1
-    return {"token": token, "lexeme": lexeme}
+    return {"token": token, "lexeme": lexeme, "error": error}

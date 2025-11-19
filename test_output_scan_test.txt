@@ -15,4 +15,15 @@ GreaterThan      >
 LTEqual          <=
 GTEqual          >=
 NotEqual         !=
+Lexical Error: Illegal character/character sequence
+Error
+String           "abcd"
+Lexical Error: Unterminated string
+Error
+Lexical Error: Illegal character/character sequence
+Error
+Lexical Error: Illegal character/character sequence
+Error
+Lexical Error: Unterminated string
+Error
 EndOfFile        
