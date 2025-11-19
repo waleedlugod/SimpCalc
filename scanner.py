@@ -117,6 +117,8 @@ def gettoken():
             token = state.name
             if state == States.Error:
                 error = f"Lexical Error: {error_reason}"
+            elif state == States.Identifier and lexeme in fixed_tokens:
+                token = fixed_tokens[lexeme]
     else:
         token = "EndOfFile"
 

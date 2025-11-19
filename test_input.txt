@@ -1,13 +1,8 @@
 // comment
 := ; : , ( ) + -
-// comment
 *           / ** < = > <= >= !=
-// comment
-!
-// comment
 "abcd"
-// comment
 "ab
-// comment
 cd ef gh"
+PRINT, IF, ELSE, ENDIF, SQRT, AND, OR, NOT
 // comment

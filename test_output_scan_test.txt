@@ -15,8 +15,6 @@ GreaterThan      >
 LTEqual          <=
 GTEqual          >=
 NotEqual         !=
-Lexical Error: Illegal character/character sequence
-Error
 String           "abcd"
 Lexical Error: Unterminated string
 Error
@@ -25,4 +23,19 @@ Identifier       ef
 Identifier       gh
 Lexical Error: Unterminated string
 Error
+Print            PRINT
+Comma            ,
+If               IF
+Comma            ,
+Else             ELSE
+Comma            ,
+EndIf            ENDIF
+Comma            ,
+Sqrt             SQRT
+Comma            ,
+And              AND
+Comma            ,
+Or               OR
+Comma            ,
+Not              NOT
 EndOfFile        
