@@ -58,10 +58,12 @@ def gettoken():
     if idx < len(input_file):
         c = input_file[idx]
 
+        # ignore whitespace
         if c == " " or c == "\t" or c == "\n":
             idx += 1
             return gettoken()
 
+        # ignore comments
         if c == "/" and idx + 1 < len(input_file) and input_file[idx + 1] == "/":
             while c != "\n" and idx + 1 < len(input_file):
                 idx += 1
@@ -81,11 +83,13 @@ def gettoken():
                 idx += 1
                 state = States.Error
                 error_reason = "Illegal character/character sequence"
+
         elif c == "*":
             if input_file[idx + 1] == "*":
                 lexeme += input_file[idx + 1]
                 idx += 1
-        elif c == '"':
+
+        elif c == '"':  # string
             state = States.Error
             error_reason = "Unterminated string"
             while idx + 1 < len(input_file):
@@ -97,7 +101,8 @@ def gettoken():
                 if c == '"':
                     state = States.String
                     break
-        elif c.isalpha() or c == "_":
+
+        elif c.isalpha() or c == "_":  # identifier
             state = States.Error
             error_reason = "Illegal character/character sequence"
             while idx + 1 < len(input_file):
@@ -108,7 +113,8 @@ def gettoken():
                 else:
                     state = States.Identifier
                     break
-        elif c.isdigit():
+
+        elif c.isdigit():  # number
             num_state = 4
             state = States.Error
             error_reason = "Invalid number format"
@@ -174,14 +180,16 @@ def gettoken():
                         else:
                             state = States.Number
                             break
-            else:
+            else:  # set the correct state when end of file
                 if num_state == 4 or num_state == 8 or num_state == 9:
                     state = States.Number
-        elif lexeme not in fixed_tokens:
+
+        elif lexeme not in fixed_tokens:  # miscallaneous first input character
             state = States.Error
             error_reason = "Illegal character/character sequence"
         idx += 1
 
+        # format output
         if state == States.NONE:
             token = fixed_tokens[lexeme]
         else:
