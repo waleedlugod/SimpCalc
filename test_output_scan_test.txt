@@ -1,41 +1,15 @@
-Assign           :=
-Semicolon        ;
-Colon            :
-Comma            ,
-LeftParen        (
-RightParen       )
-Plus             +
-Minus            -
-Multiply         *
-Divide           /
-Raise            **
-LessThan         <
-Equal            =
-GreaterThan      >
-LTEqual          <=
-GTEqual          >=
-NotEqual         !=
-String           "abcd"
-Lexical Error: Unterminated string
-Error
-Identifier       cd
-Identifier       ef
-Identifier       gh
-Lexical Error: Unterminated string
-Error
-Print            PRINT
-Comma            ,
-If               IF
-Comma            ,
-Else             ELSE
-Comma            ,
-EndIf            ENDIF
-Comma            ,
-Sqrt             SQRT
-Comma            ,
-And              AND
-Comma            ,
-Or               OR
-Comma            ,
-Not              NOT
+Number           1
+Number           15
+Number           1.5
+Number           10e+6
+Number           10E+6
+Number           23.23e-5
+Lexical Error: Illegal character/character sequence
+Error 4..
+Lexical Error: Illegal character/character sequence
+Error 4e.
+Lexical Error: Illegal character/character sequence
+Error 4.59e.
+Lexical Error: Illegal character/character sequence
+Error 4.59e+.
 EndOfFile        

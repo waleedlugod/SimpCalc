@@ -58,9 +58,9 @@ def gettoken():
     if idx < len(input_file):
         c = input_file[idx]
 
-        while c == " " or c == "\t" or c == "\n":
+        if c == " " or c == "\t" or c == "\n":
             idx += 1
-            c = input_file[idx]
+            return gettoken()
 
         if c == "/" and idx + 1 < len(input_file) and input_file[idx + 1] == "/":
             while c != "\n" and idx + 1 < len(input_file):
@@ -106,6 +106,75 @@ def gettoken():
                 else:
                     state = States.Identifier
                     break
+        elif c.isdigit():
+            num_state = 4
+            state = States.Error
+            error_reason = "Illegal character/character sequence"
+            while idx + 1 < len(input_file):
+                c = input_file[idx + 1]
+                match num_state:
+                    case 4:
+                        if c.isdigit():
+                            lexeme += c
+                            idx += 1
+                        elif c == ".":
+                            lexeme += c
+                            idx += 1
+                            num_state = 5
+                        elif c == "e" or c == "E":
+                            lexeme += c
+                            idx += 1
+                            num_state = 6
+                        else:
+                            state = States.Number
+                            break
+                    case 5:
+                        lexeme += c
+                        idx += 1
+                        if c.isdigit():
+                            num_state = 9
+                        else:
+                            state = States.Error
+                            break
+                    case 6:
+                        lexeme += c
+                        idx += 1
+                        if c.isdigit():
+                            num_state = 8
+                        elif c == "+" or c == "-":
+                            num_state = 7
+                        else:
+                            state = States.Error
+                            break
+                    case 7:
+                        lexeme += c
+                        idx += 1
+                        if c.isdigit():
+                            num_state = 8
+                        else:
+                            state = States.Error
+                            break
+                    case 8:
+                        if c.isdigit():
+                            lexeme += c
+                            idx += 1
+                        else:
+                            state = States.Number
+                            break
+                    case 9:
+                        if c.isdigit():
+                            lexeme += c
+                            idx += 1
+                        elif c == "e" or c == "E":
+                            lexeme += c
+                            idx += 1
+                            num_state = 6
+                        else:
+                            state = States.Number
+                            break
+            else:
+                if num_state == 4 or num_state == 8 or num_state == 9:
+                    state = States.Number
         elif lexeme not in fixed_tokens:
             state = States.Error
             error_reason = "Illegal character/character sequence"

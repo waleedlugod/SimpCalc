@@ -1,8 +1,11 @@
-// comment
-:= ; : , ( ) + -
-*           / ** < = > <= >= !=
-"abcd"
-"ab
-cd ef gh"
-PRINT, IF, ELSE, ENDIF, SQRT, AND, OR, NOT
-// comment
+1
+15
+1.5
+10e+6
+10E+6
+23.23e-5
+4..
+4e.
+4.59e.
+4.59e+.
+
