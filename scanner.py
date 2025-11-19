@@ -75,11 +75,12 @@ def gettoken():
         error_reason = ""
         lexeme = c
         if c == ":" or c == "<" or c == ">" or c == "!":
-            if input_file[idx + 1] == "=":
+            if idx + 1 < len(input_file) and input_file[idx + 1] == "=":
                 lexeme += input_file[idx + 1]
                 idx += 1
             elif c == "!":
-                lexeme += input_file[idx + 1]
+                if idx + 1 < len(input_file):
+                    lexeme += input_file[idx + 1]
                 idx += 1
                 state = States.Error
                 error_reason = "Illegal character/character sequence"
@@ -103,15 +104,13 @@ def gettoken():
                     break
 
         elif c.isalpha() or c == "_":  # identifier
-            state = States.Error
-            error_reason = "Illegal character/character sequence"
+            state = States.Identifier
             while idx + 1 < len(input_file):
                 c = input_file[idx + 1]
                 if c.isalpha() or c.isdigit() or c == "_":
                     lexeme += c
                     idx += 1
                 else:
-                    state = States.Identifier
                     break
 
         elif c.isdigit():  # number
