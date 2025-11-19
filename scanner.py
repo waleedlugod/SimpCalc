@@ -62,6 +62,14 @@ def gettoken():
             idx += 1
             c = input_file[idx]
 
+        if c == "/" and idx + 1 < len(input_file) and input_file[idx + 1] == "/":
+            while c != "\n" and idx + 1 < len(input_file):
+                idx += 1
+                c = input_file[idx]
+            else:
+                idx += 1
+                return gettoken()
+
         error_reason = ""
         lexeme = c
         if c == ":" or c == "<" or c == ">" or c == "!":

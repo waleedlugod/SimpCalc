@@ -1,6 +1,13 @@
+// comment
 := ; : , ( ) + -
+// comment
 *           / ** < = > <= >= !=
+// comment
 !
+// comment
 "abcd"
+// comment
 "ab
+// comment
 cd ef gh"
+// comment
