@@ -24,7 +24,7 @@ fixed_tokens = {
     "PRINT": "Print",
     "IF": "If",
     "ELSE": "Else",
-    "ENDIF": "EndIf",
+    "ENDIF": "Endif",
     "SQRT": "Sqrt",
     "AND": "And",
     "OR": "Or",
@@ -77,6 +77,8 @@ def gettoken():
                 lexeme += input_file[idx + 1]
                 idx += 1
             elif c == "!":
+                lexeme += input_file[idx + 1]
+                idx += 1
                 state = States.Error
                 error_reason = "Illegal character/character sequence"
         elif c == "*":
@@ -109,7 +111,7 @@ def gettoken():
         elif c.isdigit():
             num_state = 4
             state = States.Error
-            error_reason = "Illegal character/character sequence"
+            error_reason = "Invalid number format"
             while idx + 1 < len(input_file):
                 c = input_file[idx + 1]
                 match num_state:
@@ -189,6 +191,6 @@ def gettoken():
             elif state == States.Identifier and lexeme in fixed_tokens:
                 token = fixed_tokens[lexeme]
     else:
-        token = "EndOfFile"
+        token = "EndofFile"
 
     return {"token": token, "lexeme": lexeme, "error": error}
