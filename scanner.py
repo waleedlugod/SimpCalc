@@ -44,8 +44,10 @@ class States(Enum):
 def setup(filename):
     global input_file
     global idx
+    global input_file_name
     input_file = open(filename).read()
     idx = 0
+    input_file_name = filename
 
 
 def gettoken():
