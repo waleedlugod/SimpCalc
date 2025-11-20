@@ -2,6 +2,7 @@ from enum import Enum
 
 idx = 0
 input_file = ""
+output_file = ""
 
 fixed_tokens = {
     ":=": "Assign",
@@ -43,9 +44,11 @@ class States(Enum):
 
 def setup(filename):
     global input_file
+    global output_file
     global idx
     global input_file_name
     input_file = open(filename).read()
+    output_file = open(filename.replace("input", "output_scan"), "w")
     idx = 0
     input_file_name = filename
 
@@ -202,4 +205,16 @@ def gettoken():
     else:
         token = "EndofFile"
 
-    return {"token": token, "lexeme": lexeme, "error": error}
+    if token == "EndofFile":
+        output_file.write(f"{token}")
+    elif token == "Error":
+        output_file.write(f"{error} \nError\n")
+    else:
+        output_file.write(f"{token:<17}{lexeme}\n")
+
+    return {
+        "token": token,
+        "lexeme": lexeme,
+        "error": error,
+        "filename": input_file_name,
+    }
