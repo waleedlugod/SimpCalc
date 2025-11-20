@@ -46,11 +46,9 @@ def setup(filename):
     global input_file
     global output_file
     global idx
-    global input_file_name
     input_file = open(filename).read()
     output_file = open(filename.replace("input", "output_scan"), "w")
     idx = 0
-    input_file_name = filename
 
 
 def gettoken():
@@ -216,5 +214,4 @@ def gettoken():
         "token": token,
         "lexeme": lexeme,
         "error": error,
-        "filename": input_file_name,
     }

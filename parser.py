@@ -1,31 +1,56 @@
 import scanner
 
-current = None  
+current = None
+input_filename = ""
+output_file = ""
+
+
+def setup(filename):
+    global input_filename
+    global output_file
+    scanner.setup(filename)
+    input_filename = filename
+    output_file = open(filename.replace("input", "output_parse"), "w")
+
 
 # Gets the next token based on the given input.
 def next_token():
     global current
     current = scanner.gettoken()
 
-# Prints out respective errors if token does not match.
+
+# writes out respective errors if token does not match.
 def match(expected):
     global current
     if current["token"] == expected:
         next_token()
     else:
-        raise Exception(f"Parse Error: {expected} expected.") 
+        raise Exception(f"Parse Error: {expected} expected.")
 
-# Starts the program.
+
+# Grammar rules
 def Prg():
-    Blk()
-    if current["token"] != "EndofFile":
-        print("Parse Error: Unexpected token.") 
-    else:
-        print(f"{scanner.input_file_name.split('/')[-1]} is a valid SimpCalc program")
+    global input_filename
+    global current
+    current = scanner.gettoken()
+    try:
+        Blk()
+        if current["token"] != "EndofFile":
+            raise Exception("Parse Error: Unexpected token.")
+        else:
+            output_file.write(
+                f"{input_filename.split('/')[-1]} is a valid SimpCalc program"
+            )
+    except Exception as e:
+        output_file.write(str(e))
+        while current["token"] != "EndofFile":
+            next_token()
+
 
 def Blk():
     while current["token"] in ["Identifier", "Print", "If"]:
         Stm()
+
 
 def Stm():
     if current["token"] == "Identifier":
@@ -33,7 +58,7 @@ def Stm():
         match("Assign")
         Exp()
         match("Semicolon")
-        print("Assignment Statement Recognized")
+        output_file.write("Assignment Statement Recognized\n")
 
     elif current["token"] == "Print":
         next_token()
@@ -42,19 +67,20 @@ def Stm():
         Argfollow()
         match("RightParen")
         match("Semicolon")
-        print("Print Statement Recognized")
+        output_file.write("Print Statement Recognized\n")
 
     elif current["token"] == "If":
-        print("If Statement Begins")
+        output_file.write("If Statement Begins\n")
         next_token()
         Cnd()
         match("Colon")
         Blk()
         Iffollow()
-        print("If Statement Ends")
+        output_file.write("If Statement Ends\n")
 
     else:
         raise Exception(f"Parse Error: Unexpected token.")
+
 
 def Arg():
     if current["token"] == "String":
@@ -62,10 +88,12 @@ def Arg():
     else:
         Exp()
 
+
 def Argfollow():
     while current["token"] == "Comma":
         match("Comma")
         Arg()
+
 
 def Iffollow():
     if current["token"] == "Endif":
@@ -79,14 +107,23 @@ def Iffollow():
     else:
         while current["token"] not in ["Endif", "EndofFile"]:
             next_token()
-        print("Parse Error: Incomplete if Statement")
+        raise Exception("Parse Error: Incomplete if Statement")
+
 
 def Cnd():
     Exp()
-    if current["token"] not in ["LessThan", "Equal", "GreaterThan", "LTEqual", "GTEqual", "NotEqual"]:
+    if current["token"] not in [
+        "LessThan",
+        "Equal",
+        "GreaterThan",
+        "LTEqual",
+        "GTEqual",
+        "NotEqual",
+    ]:
         raise Exception("Parse Error: Missing operator.")
     next_token()
     Exp()
+
 
 def Exp():
     Trm()
@@ -94,11 +131,13 @@ def Exp():
         next_token()
         Trm()
 
+
 def Trm():
     Fac()
     while current["token"] in ["Multiply", "Divide"]:
         next_token()
         Fac()
+
 
 def Fac():
     Lit()
@@ -106,10 +145,12 @@ def Fac():
         next_token()
         Lit()
 
+
 def Lit():
     if current["token"] == "Minus":
         next_token()
     Val()
+
 
 def Val():
     if current["token"] in ["Identifier", "Number"]:
