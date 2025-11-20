@@ -48,7 +48,7 @@ def setup(filename):
     global output_file
     global idx
     input_file = open(filename).read()
-    output_file = open(filename.replace("input", "output_scan"), "w")
+    output_file = open("output_scan".join(filename.rsplit("input", 1)), "w")
     idx = 0
 
 

@@ -11,7 +11,7 @@ def setup(filename):
     global output_file
     scanner.setup(filename)
     input_filename = filename
-    output_file = open(filename.replace("input", "output_parse"), "w")
+    output_file = open("output_parse".join(filename.rsplit("input", 1)), "w")
 
 
 # Gets the next token from scanner
