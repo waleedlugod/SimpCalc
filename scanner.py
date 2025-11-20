@@ -33,7 +33,7 @@ fixed_tokens = {
 }
 
 
-class States(Enum):
+class Dynamic_token(Enum):
     NONE = 0
     Error = 1
     Identifier = 2
@@ -42,6 +42,7 @@ class States(Enum):
     Comment = 5
 
 
+# Setup helper variables
 def setup(filename):
     global input_file
     global output_file
@@ -51,12 +52,13 @@ def setup(filename):
     idx = 0
 
 
+# Get next token from input stream
 def gettoken():
     global idx
     token = ""
     lexeme = ""
     error = ""
-    state = States.NONE
+    dynamic_token = Dynamic_token.NONE
 
     if idx < len(input_file):
         c = input_file[idx]
@@ -75,7 +77,7 @@ def gettoken():
                 idx += 1
                 return gettoken()
 
-        error_reason = ""
+        error = ""
         lexeme = c
         if c == ":" or c == "<" or c == ">" or c == "!":
             if idx + 1 < len(input_file) and input_file[idx + 1] == "=":
@@ -85,8 +87,8 @@ def gettoken():
                 if idx + 1 < len(input_file):
                     lexeme += input_file[idx + 1]
                 idx += 1
-                state = States.Error
-                error_reason = "Illegal character/character sequence"
+                dynamic_token = Dynamic_token.Error
+                error = "Illegal character/character sequence"
 
         elif c == "*":
             if input_file[idx + 1] == "*":
@@ -94,8 +96,8 @@ def gettoken():
                 idx += 1
 
         elif c == '"':  # string
-            state = States.Error
-            error_reason = "Unterminated string"
+            dynamic_token = Dynamic_token.Error
+            error = "Unterminated string"
             while idx + 1 < len(input_file):
                 c = input_file[idx + 1]
                 if c == "\n":
@@ -103,11 +105,11 @@ def gettoken():
                 lexeme += c
                 idx += 1
                 if c == '"':
-                    state = States.String
+                    dynamic_token = Dynamic_token.String
                     break
 
         elif c.isalpha() or c == "_":  # identifier
-            state = States.Identifier
+            dynamic_token = Dynamic_token.Identifier
             while idx + 1 < len(input_file):
                 c = input_file[idx + 1]
                 if c.isalpha() or c.isdigit() or c == "_":
@@ -118,8 +120,8 @@ def gettoken():
 
         elif c.isdigit():  # number
             num_state = 4
-            state = States.Error
-            error_reason = "Invalid number format"
+            dynamic_token = Dynamic_token.Error
+            error = "Invalid number format"
             while idx + 1 < len(input_file):
                 c = input_file[idx + 1]
                 match num_state:
@@ -136,7 +138,7 @@ def gettoken():
                             idx += 1
                             num_state = 6
                         else:
-                            state = States.Number
+                            dynamic_token = Dynamic_token.Number
                             break
                     case 5:
                         lexeme += c
@@ -144,7 +146,7 @@ def gettoken():
                         if c.isdigit():
                             num_state = 9
                         else:
-                            state = States.Error
+                            dynamic_token = Dynamic_token.Error
                             break
                     case 6:
                         lexeme += c
@@ -154,7 +156,7 @@ def gettoken():
                         elif c == "+" or c == "-":
                             num_state = 7
                         else:
-                            state = States.Error
+                            dynamic_token = Dynamic_token.Error
                             break
                     case 7:
                         lexeme += c
@@ -162,14 +164,14 @@ def gettoken():
                         if c.isdigit():
                             num_state = 8
                         else:
-                            state = States.Error
+                            dynamic_token = Dynamic_token.Error
                             break
                     case 8:
                         if c.isdigit():
                             lexeme += c
                             idx += 1
                         else:
-                            state = States.Number
+                            dynamic_token = Dynamic_token.Number
                             break
                     case 9:
                         if c.isdigit():
@@ -180,29 +182,30 @@ def gettoken():
                             idx += 1
                             num_state = 6
                         else:
-                            state = States.Number
+                            dynamic_token = Dynamic_token.Number
                             break
             else:  # set the correct state when end of file
                 if num_state == 4 or num_state == 8 or num_state == 9:
-                    state = States.Number
+                    dynamic_token = Dynamic_token.Number
 
-        elif lexeme not in fixed_tokens:  # miscallaneous first input character
-            state = States.Error
-            error_reason = "Illegal character/character sequence"
+        elif c not in fixed_tokens:  # miscallaneous first input character
+            dynamic_token = Dynamic_token.Error
+            error = "Illegal character/character sequence"
         idx += 1
 
-        # format output
-        if state == States.NONE:
+        # set token value
+        if dynamic_token == Dynamic_token.NONE:
             token = fixed_tokens[lexeme]
         else:
-            token = state.name
-            if state == States.Error:
-                error = f"Lexical Error: {error_reason}"
-            elif state == States.Identifier and lexeme in fixed_tokens:
+            token = dynamic_token.name
+            if dynamic_token == Dynamic_token.Error:
+                error = f"Lexical Error: {error}"
+            elif dynamic_token == Dynamic_token.Identifier and lexeme in fixed_tokens:
                 token = fixed_tokens[lexeme]
     else:
         token = "EndofFile"
 
+    # write to scan file
     if token == "EndofFile":
         output_file.write(f"{token}")
     elif token == "Error":
@@ -213,5 +216,4 @@ def gettoken():
     return {
         "token": token,
         "lexeme": lexeme,
-        "error": error,
     }

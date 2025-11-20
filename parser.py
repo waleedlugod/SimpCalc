@@ -5,6 +5,7 @@ input_filename = ""
 output_file = ""
 
 
+# Setup helper variables
 def setup(filename):
     global input_filename
     global output_file
@@ -13,13 +14,13 @@ def setup(filename):
     output_file = open(filename.replace("input", "output_parse"), "w")
 
 
-# Gets the next token based on the given input.
+# Gets the next token from scanner
 def next_token():
     global current
     current = scanner.gettoken()
 
 
-# writes out respective errors if token does not match.
+# Check if the current token matches the expected
 def match(expected):
     global current
     if current["token"] == expected:
@@ -28,7 +29,7 @@ def match(expected):
         raise Exception(f"Parse Error: {expected} expected.")
 
 
-# Grammar rules
+### Grammar rules ###
 def Prg():
     global input_filename
     global current
@@ -41,6 +42,7 @@ def Prg():
             output_file.write(
                 f"{input_filename.split('/')[-1]} is a valid SimpCalc program"
             )
+    # continue scanning file if there is a parse error to match sample files
     except Exception as e:
         output_file.write(str(e))
         while current["token"] != "EndofFile":
